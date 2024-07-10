@@ -1,0 +1,222 @@
+# -*- coding: utf-8 -*-
+"""
+Alyssa Wheeler
+3/19/24
+Add student Info to CSV file
+"""
+
+import csv
+class Course:
+    def __init__ (self,abbreviation, number, name, number_credits):
+        self.abbreviation = abbreviation
+        self.number = number
+        self.name = name
+        self.number_credits = number_credits
+        
+    #return printed out variables
+        def __str__(self):
+            return "Department abbreviation: " + str(self.abbreviation) + "course #: " + str(self.number) + "course name:" + str(self.name) + "# of credits" + str(self.number_credits)
+
+class GPA(Course):
+    def __init__ (self,abbreviation, number, name, number_credits, semester, lettergrade):
+        #inherit month,day,year from Date class
+        super().__init__(abbreviation, number, name, number_credits)
+        self.semester = semester
+        self.lettergrade = lettergrade
+            
+    #get numeric grade from lettergrade
+    def getQualityPoints(lettergrade, number_credits):
+        if lettergrade == "A":
+            numeric = 4.00
+        if lettergrade == "A-":
+            numeric = 3.67
+        if lettergrade == "B+":
+            numeric = 3.33
+        if lettergrade == "B":
+            numeric = 3.00
+        if lettergrade == "B-":
+            numeric = 2.67
+        if lettergrade == "C+":
+            numeric = 2.33
+        if lettergrade == "C":
+            numeric = 2.00
+        if lettergrade == "C-":
+            numeric = 1.67
+        if lettergrade == "D+":
+            numeric = 1.33
+        if lettergrade == "D":
+            numeric = 1.00
+        if lettergrade == "D-":
+            numeric = 0.67
+        if lettergrade == "F":
+            numeric = 0.00
+        
+        #return numberic grade * number of credits to get quality points
+        return float(number_credits * numeric)
+    
+    def numericGPA(lettergrade):
+        if lettergrade == "A":
+            return 4.00
+        if lettergrade == "A-":
+            return 3.67
+        if lettergrade == "B+":
+            return 3.33
+        if lettergrade == "B":
+            return 3.00
+        if lettergrade == "B-":
+            return 2.67
+        if lettergrade == "C+":
+            return 2.33
+        if lettergrade == "C":
+            return 2.00
+        if lettergrade == "C-":
+            return 1.67
+        if lettergrade == "D+":
+            return 1.33
+        if lettergrade == "D":
+            return 1.00
+        if lettergrade == "D-":
+            return 0.67
+        if lettergrade == "F":
+            return 0.00
+            
+#return printed out variables
+    def __str__(self):
+        return "Department abbreviation: " + str(self.abbreviation) + "course #: " + str(self.number) + "course name:" + str(self.name) + "# of credits" + str(self.number_credits)
+        return "Semester: " + str(self.semester) + "lettergrade: " + str(self.lettergrade)
+
+if __name__ == "__main__":
+    #prompt if adding new student or not
+    NewStudent = input("Is this a new student (Y/y): ")
+    if NewStudent == "Y" or NewStudent == "y":
+        while True:
+            try:
+                #prompt for Student ID and first and last name
+                StudentID = input("Enter Student's ID number: ")
+                StudentFirst = input("Enter Student's first name: ")
+                StudentLast = input("Enter Student's last name: ")
+                
+                #open and create csv file to write
+                with open ("{}-{}-{}.csv".format(StudentID,StudentFirst,StudentLast), "w+") as file:
+                    myFile = csv.writer(file, lineterminator = '\n')
+                    
+                    #header row
+                    myFile.writerow(["Department", "Course Number", "Course Name", "Credits", "Semester", "Grade", "Quality Points", "GPA"])
+                    while True: 
+                        try: 
+                            #get input for GPA attributes
+                            Student = GPA((input("Enter course abbreviation: ")),(input("Enter course number: ")),(input("Enter course name: ")),(int(input("Enter the number of course credits: "))),(input("Enter the semester (ex:20/FA): ")),(input("Enter the letter grade: ")))
+                            
+                            #get Quality Points
+                            grade = GPA.getQualityPoints(Student.lettergrade, Student.number_credits)
+                            
+                            #get overal GPA
+                            Overall_GPA = float(GPA.numericGPA(Student.lettergrade))
+                            
+                            #write rows to file
+                            myFile.writerow([Student.abbreviation, Student. number, Student.name, Student.number_credits, Student.semester, Student.lettergrade, grade, Overall_GPA])
+                            
+                            #prompt if want to add another course to student
+                            prompt_addmore = input("Add more courses? (Y/y): ")
+                            if prompt_addmore == "y":
+                                continue
+                            if prompt_addmore == "Y":
+                                continue
+                            else:
+                                break
+                            
+                            #add overall_GPA
+                            myFile.writerow(["Overall GPA:" + sum(Overall_GPA)])
+                            
+                        except ValueError:
+                            print("Error")
+                        print
+                        
+                    file.close()
+                        
+                    #open file to read
+                    with open("{}-{}-{}.csv".format(StudentID,StudentFirst,StudentLast)) as file:
+                        reader = csv.reader(file)
+                        for row in reader:
+                            
+                            #print rows to console
+                            print(row)
+                            
+                        file.close()
+                        
+                #prompt to continue or not
+                    prompt_user = input("Continue? (Y/y): ")
+                    if prompt_user == "y":
+                        continue
+                    if prompt_user == "Y":
+                        continue
+                    else:
+                        break
+                
+            except ValueError:
+                print("Error")
+                
+    #if not adding new student, prompt to ask which student want to look at
+    else:
+        StudentID = input("Enter Student's ID number: ")
+        StudentFirst = input("Enter Student's first name: ")
+        StudentLast = input("Enter Student's last name: ")
+
+        #open in read and print to console
+        with open("{}-{}-{}.csv".format(StudentID,StudentFirst,StudentLast)) as file:
+            reader = csv.reader(file)
+            for row in reader:
+                print(row)
+                
+            file.close()
+
+"""
+Some examples of the code being ran:
+
+Is this a new student (Y/y): y
+Enter Student's ID number: 222
+Enter Student's first name: Jane
+Enter Student's last name: Day
+Enter course abbreviation: DS
+Enter course number: 510
+Enter course name: Computer Science Fundamentals
+Enter the number of course credits: 4
+Enter the semester (ex:20/FA): 20/FA
+Enter the letter grade: A
+Add more courses? (Y/y): Y
+Enter course abbreviation: MA
+Enter course number: 117
+Enter course name: Discrete Structures
+Enter the number of course credits: 4
+Enter the semester (ex:20/FA): 19/FA
+Enter the letter grade: B
+Add more courses? (Y/y): n
+['Department', 'Course Number', 'Course Name', 'Credits', 'Semester', 'Grade', 'Quality Points', 'GPA']
+['DS', '510', 'Computer Science Fundamentals', '4', '20/FA', 'A', '16.0', '4.0']
+['MA', '117', 'Discrete Structures', '4', '19/FA', 'B', '12.0', '3.0']
+Continue? (Y/y): n
+
+Is this a new student (Y/y): n
+Enter Student's ID number: 222
+Enter Student's first name: Jane
+Enter Student's last name: Day
+['Department', 'Course Number', 'Course Name', 'Credits', 'Semester', 'Grade', 'Quality Points', 'GPA']
+['DS', '510', 'Computer Science Fundamentals', '4', '20/FA', 'A', '16.0', '4.0']
+['MA', '117', 'Discrete Structures', '4', '19/FA', 'B', '12.0', '3.0']
+
+Is this a new student (Y/y): y
+Enter Student's ID number: 111
+Enter Student's first name: John
+Enter Student's last name: Doe
+Enter course abbreviation: CS
+Enter course number: 104
+Enter course name: Quantitative Methods
+Enter the number of course credits: 3
+Enter the semester (ex:20/FA): 20/SP
+Enter the letter grade: C+
+Add more courses? (Y/y): n
+['Department', 'Course Number', 'Course Name', 'Credits', 'Semester', 'Grade', 'Quality Points', 'GPA']
+['CS', '104', 'Quantitative Methods', '3', '20/SP', 'C+', '6.99', '2.33']
+"""
+            
+            
